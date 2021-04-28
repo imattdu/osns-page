@@ -10,6 +10,8 @@ import Delete from "../views/Delete";
 import Set from "../views/Set";
 import AccountInfo from "../views/set/AccountInfo";
 import UserProfile from "../views/set/UserProfile";
+import Tag from "../views/Tag";
+
 
 Vue.use(Router)
 
@@ -33,6 +35,10 @@ export default new Router({
     {
       path: '/note',
       component: Note
+    },
+    {
+      path: '/tag',
+      component: Tag
     },
     {
       path: '/note/delete',

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+    <el-menu  class="el-menu-demo" mode="horizontal" >
       <el-menu-item @click="back"><i class="el-icon-back"></i>返回</el-menu-item>
       <el-menu-item index="1">
         <router-link to="/user/set/accountInfo">账号信息</router-link>

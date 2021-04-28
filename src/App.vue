@@ -1,7 +1,7 @@
 <template>
 
   <div>
-    <el-menu :default-active="1" class="el-menu-demo" mode="horizontal">
+    <el-menu class="el-menu-demo" mode="horizontal">
       <el-menu-item style="color: #409EFF">在线学习笔记系统</el-menu-item>
       <el-menu-item v-if="isLogin" index="1">
         <router-link to="/note/add">添加笔记</router-link>
@@ -10,15 +10,22 @@
         <router-link to="/note">笔记</router-link>
       </el-menu-item>
       <el-menu-item v-if="isLogin" index="3">
-        <router-link to="/note/share">分享</router-link>
+        <router-link to="/tag">标签</router-link>
       </el-menu-item>
       <el-menu-item v-if="isLogin" index="4">
+        <router-link to="/note/share">分享</router-link>
+      </el-menu-item>
+      <el-menu-item v-if="isLogin" index="5">
         <router-link to="/note/delete">回收站</router-link>
       </el-menu-item>
-      <el-menu-item index="5" v-if="isLogin">
+
+
+      <el-menu-item index="6" v-if="isLogin">
         <el-dropdown :hide-on-click="false" @command="handleCommand">
-            <span class="el-dropdown-link">
-              {{ user.nickname }}<i class="el-icon-arrow-down el-icon--right"></i>
+
+          <span class="el-dropdown-link">
+                <el-avatar :src="user.avatar"></el-avatar>
+                {{ user.nickname }}<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="accountSet">账号设置</el-dropdown-item>
