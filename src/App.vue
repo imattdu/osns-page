@@ -1,8 +1,10 @@
 <template>
 
   <div>
+
+
     <el-menu class="el-menu-demo" mode="horizontal">
-      <el-menu-item style="color: #409EFF">在线学习笔记系统</el-menu-item>
+      <el-menu-item style="color: #409EFF" @click="toIndex">在线学习笔记系统</el-menu-item>
       <el-menu-item v-if="isLogin" index="1">
         <router-link to="/note/add">添加笔记</router-link>
       </el-menu-item>
@@ -19,8 +21,12 @@
         <router-link to="/note/delete">回收站</router-link>
       </el-menu-item>
 
+      <el-menu-item v-if="isLogin" index="6">
+        <router-link to="/user/person">个人中心</router-link>
+      </el-menu-item>
 
-      <el-menu-item index="6" v-if="isLogin">
+
+      <el-menu-item v-if="isLogin">
         <el-dropdown :hide-on-click="false" @command="handleCommand">
 
           <span class="el-dropdown-link">
@@ -43,13 +49,14 @@
 
 
     </el-menu>
-    <el-container>
 
+    <el-row>
       <el-col :xs="24" :sm="24" :md="24" id="content">
         <router-view/>
       </el-col>
+    </el-row>
 
-    </el-container>
+
 
   </div>
 
@@ -62,18 +69,10 @@ import axios from "axios";
 
 export default {
   name: 'App',
-
-
   data() {
-
     return {
-
       isCollapse: true,
-      gridData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
+      gridData: [],
       form: {
         name: '',
         region: '',
@@ -85,7 +84,6 @@ export default {
         desc: ''
       },
       formLabelWidth: '120px'
-
     }
   },
   computed: {
@@ -93,6 +91,9 @@ export default {
     ...mapState(['user']),
   },
   methods: {
+    toIndex() {
+      this.$router.push('/note/')
+    },
     toAdd() {
       this.$router.push('/note/add')
     },
@@ -101,12 +102,6 @@ export default {
     },
     toDelete() {
       this.$router.push('/note/delete')
-    },
-    toTest() {
-      this.$router.push('/note/test')
-    },
-    toShare() {
-      this.$router.push('/note/share')
     },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
@@ -117,7 +112,6 @@ export default {
     handleCommand(command) {
       if (command == 'personInfo') {
         this.dialogFormVisible = true
-
       } else if (command == 'accountSet') {
         this.$router.push('/user/set')
       } else if (command == 'quit') {
@@ -126,7 +120,15 @@ export default {
         const user = this.user
         axios.post(url, user).then(
           response => {
-            this.$message('退出系统');
+            if (response.data.success) {
+              this.$message({
+                message: response.data.message,
+                type: 'info',
+                showClose: true,
+                duration: 3000
+              });
+            }
+
           }
         ).catch(error => {
           console.log(error)
@@ -153,7 +155,6 @@ export default {
 </script>
 
 <style>
-
 
 .el-dropdown-link {
   cursor: pointer;

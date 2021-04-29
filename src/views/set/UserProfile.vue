@@ -1,6 +1,5 @@
 <template>
   <el-row>
-
     <el-col :xs="24" :sm="17" :md="12">
       <el-form ref="form" :model="user_profile" label-width="80px">
         <el-form-item label="姓名">
@@ -12,14 +11,12 @@
             <el-option label="女" value="0"></el-option>
           </el-select>
         </el-form-item>
-
         <el-form-item label="签名">
           <el-input v-model="user_profile.maxim"></el-input>
         </el-form-item>
         <el-form-item label="地址">
           <el-input v-model="user_profile.address"></el-input>
         </el-form-item>
-
         <el-form-item>
           <el-button @click="onSubmit">更新</el-button>
           <el-button>取消</el-button>
@@ -35,6 +32,22 @@ import axios from "axios";
 
 export default {
   name: "UserProfile",
+  mounted() {
+    // 初始化用户详细信息
+    const url = `/accounts/user/profile/${this.user.id}`
+    axios.get(url).then(
+      response => {
+        const userprofile = response.data.data
+        console.log(userprofile)
+        if (response.data.data != {}) {
+          this.user_profile = userprofile
+        }
+        this.user_profile.user_id = this.user.id
+      }
+    ).catch(error => {
+
+    });
+  },
   data() {
     return {
       user_profile: {
@@ -48,32 +61,20 @@ export default {
   computed: {
     ...mapState(['isLogin', 'user']),
   },
-  mounted() {
-    const url = `/accounts/userprofile/${this.user.id}`
-    axios.get(url).then(
-      response => {
-        const userprofile = response.data
-        console.log(userprofile)
-        if (userprofile != '{}') {
-          this.user_profile = userprofile
-        }
-        this.user_profile.user_id = this.user.id
-      }
-    ).catch(error => {
-
-    });
-  },
   methods: {
     onSubmit() {
       const url = `/accounts/userprofile`
       axios.put(url, this.user_profile).then(
         response => {
-          this.$message({
-            type: 'success',
-            message: '更新成功!',
-            duration:  500,
-            showClose: true
-          });
+          if (response.data.success) {
+            this.$message({
+              type: 'success',
+              message: '更新成功!',
+              duration:  3000,
+              showClose: true
+            });
+          }
+
         }
       ).catch(error => {
 

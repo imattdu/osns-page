@@ -8,12 +8,14 @@
       <el-menu-item index="2">
         <router-link to="/user/set/userProfile">用户信息</router-link>
       </el-menu-item>
+      <el-menu-item index="3">
+        <router-link to="/user/set/loginInfo">登录信息</router-link>
+      </el-menu-item>
     </el-menu>
     <div class="line"></div>
-    <div>
+    <div class="mySet">
       <router-view></router-view>
     </div>
-
 
   </div>
 </template>
@@ -45,5 +47,7 @@ export default {
 </script>
 
 <style scoped>
-
+.mySet{
+  padding: 15px;
+}
 </style>

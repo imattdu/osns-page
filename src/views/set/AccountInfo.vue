@@ -12,10 +12,10 @@
         <el-form-item label="头像">
           <el-upload
             class="avatar-uploader"
-            action="http://127.0.0.1:8080/api/upload"
+            action="http://192.168.96.7:8080/api/upload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
-            >
+          >
             <img v-if="user.avatar" :src="user.avatar" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
@@ -33,6 +33,7 @@
 <script>
 import {mapState} from 'vuex'
 import axios from "axios";
+
 export default {
   name: "AccountInfo",
   computed: {
@@ -52,15 +53,25 @@ export default {
       const user = this.user
       axios.post(url, user).then(
         response => {
-          this.$store.dispatch('initUserInfo', response.data)
-          this.$message({
-            type: 'success',
-            message: '更新成功',
-            duration:  1000,
-            showClose: true
-          });
+          if (response.data.success) {
+            this.$store.dispatch('initUserInfo', response.data.data)
+            this.$message({
+              type: 'success',
+              message: '更新成功',
+              duration: 1000,
+              showClose: true
+            });
+          } else {
+            this.$message({
+              type: 'error',
+              message: '更新出错',
+              duration: 1000,
+              showClose: true
+            });
+          }
+
         }
-      ).catch(error=> {
+      ).catch(error => {
         console.log(error)
       })
     },
@@ -80,9 +91,11 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -91,6 +104,7 @@ export default {
   line-height: 178px;
   text-align: center;
 }
+
 .avatar {
   width: 178px;
   height: 178px;

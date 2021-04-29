@@ -27,9 +27,6 @@ import {mapState} from 'vuex'
 import axios from "axios";
 export default {
   name: "Tag",
-  computed: {
-    ...mapState(['isLogin', 'user']),
-  },
   mounted() {
    this.init()
   },
@@ -40,72 +37,70 @@ export default {
       inputValue: ''
     };
   },
+  computed: {
+    ...mapState(['isLogin', 'user']),
+  },
   methods: {
     init() {
       let url = `/note/tag/list?uid=${this.user.id}`
       axios.get(url).then(
         response => {
-          const note_tag_name_list  = response.data.note_tag_name_list
-          let tag_list = new Array();
-          for (let i = 0; i < note_tag_name_list.length; i++) {
-            tag_list[i] = note_tag_name_list[i].value
+          if (response.data.success) {
+            const note_tag_name_list  = response.data.data
+            let tag_list = new Array();
+            for (let i = 0; i < note_tag_name_list.length; i++) {
+              tag_list[i] = note_tag_name_list[i].value
+            }
+            this.dynamicTags = tag_list
+          } else {
+
           }
-          this.dynamicTags = tag_list
+
         }
       ).catch(error => {
-
       });
     },
     handleClose(tag) {
-
       this.$confirm('确定删除该标签, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-
         this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
         let url = `/note/tag?uid=${this.user.id}&tag=` + tag
         axios.delete(url).then(
           response => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
+            if (response.data.success) {
+              this.$message({
+                message: '该标签已经删除',
+                type: 'success',
+                showClose: true,
+                duration: 3000
+              });
+            }
+
           }
         ).catch(error => {
         });
-
-
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
         });
       });
-
-
-
-
-
-
     },
-
     showInput() {
       this.inputVisible = true;
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
-
     handleInputConfirm() {
       if (!this.dynamicTags.includes(this.inputValue)) {
         let inputValue = this.inputValue;
         if (inputValue) {
           this.dynamicTags.push(inputValue);
         }
-
-
         let url = `/note/tag`
         let paramData = {}
         paramData.uid = this.user.id
@@ -113,15 +108,11 @@ export default {
         axios.put(url, paramData).then(
           response => {
             this.init()
-
           }
         ).catch(error => {
-
         });
-
         this.inputVisible = false;
         this.inputValue = '';
-
       } else {
         this.$message({
           message: '该标签已经存在,请重新输入',

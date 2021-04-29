@@ -30,11 +30,11 @@
     </el-row>
     <div style="margin: 20px 0;"></div>
     <el-row>
-      <el-col :span="6">
+      <el-col :xs="6" :sm="6" :md="6">
         <el-input  size="small" v-model="note.title" placeholder="请输入标题"></el-input>
       </el-col>
-      <el-col :span="14"><i class="el-icon-edit"></i></el-col>
-      <el-col :span="4">
+      <el-col :xs="12" :sm="12" :md="16"><i class="el-icon-edit"></i></el-col>
+      <el-col :xs="4" :sm="4" :md="2">
         <el-button @click="saveNote" plain icon="el-icon-circle-check">保存</el-button>
       </el-col>
     </el-row>
@@ -54,49 +54,50 @@ import E from "wangeditor"
 let editor = null
 export default {
   name: "Test",
-
   mounted() {
+    // 初始化文本编辑器
     editor = new E("#div1")
     editor.config.height = 400
     editor.config.zIndex = 99
-    // editor.config.uploadImgServer = 'http://127.0.0.1:8080/api/upload'
     editor.create()
 
+    // 获取笔记
     console.log(this.$route.query.id)
     this.note.id = this.$route.query.id
     let url = `/note/${this.note.id}`
     if (this.$route.query.id) {
       axios.get(url).then(
         response => {
-          console.log(response.data)
-          // this.dynamicTags = response.data.note.tags
-          this.note = response.data
-          this.note.id = this.$route.query.id
-          this.cat_value = this.note.tags
-          editor.txt.html(this.note.content) // 重新设置编辑器内容
+          if (response.data.success) {
+            console.log(response.data)
+            // this.dynamicTags = response.data.note.tags
+            this.note = response.data.data
+            this.note.id = this.$route.query.id
+            this.cat_value = this.note.tags
+            editor.txt.html(this.note.content) // 重新设置编辑器内容
+          } else {
+
+          }
 
         }
       ).catch(error => {
-
       });
     }
 
+    // 获取标签
     url = `/note/tag/list?uid=${this.user.id}`
     axios.get(url).then(
       response => {
-        this.cat_options = response.data.note_tag_name_list
-        console.log(this.cat_options)
+        if (response.data.success) {
+          this.cat_options = response.data.data
+          console.log(this.cat_options)
+        }
       }
     ).catch(error => {
-
     });
-
-
-
   },
   computed: {
     ...mapState(['user', 'isLogin'])
-
   },
   data() {
     return {
@@ -109,15 +110,11 @@ export default {
         content: '',
         tags:[]
       },
-      dynamicTags: [],
-      inputVisible: false,
-      inputValue: ''
-
+      dynamicTags: []
     }
   },
   methods: {
     saveNote() {
-
       this.note.content = editor.txt.html()
       this.note.user = this.user
       this.note.tags = this.cat_value
@@ -126,32 +123,28 @@ export default {
       }
       console.log(this.note)
       const url = '/note/save'
-
       axios.post(url, this.note).then(
         response => {
           this.$message({
-            message: `标题为${this.note.title}的笔记保存成功`,
-            type: 'success'
+            type: 'success',
+            message: '保存成功!',
+            duration:  500,
+            showClose: true
           });
           this.$router.replace('/note')
-
         }
       ).catch(error => {
-
       });
     },
-
     handleClose(tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
     },
-
     showInput() {
       this.inputVisible = true;
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
-
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {

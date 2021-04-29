@@ -58,7 +58,7 @@ export default {
       }
     };
 
-    var validatePass = (rule, value, callback) => {
+    let validatePass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入密码'));
       } else {
@@ -68,7 +68,7 @@ export default {
         callback();
       }
     };
-    var validatePass2 = (rule, value, callback) => {
+    let validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'));
       } else if (value !== this.ruleForm.pass) {
@@ -109,12 +109,25 @@ export default {
           axios.post(url, user).then(
             response => {
 
+              const res = response.data
+              if (res.success) {
+                this.$message({
+                  message: '注册成功，可以登录',
+                  type: 'success'
+                });
+                //this.$router.replace('/user/login')
+              } else {
+                if (res.code == 2001) {
+                  this.$message({
+                    message: res.message,
+                    type: 'error',
+                    showClose: true,
+                    duration: 2000
+                  });
+                }
+              }
               console.log(response.data)
-              this.$message({
-                message: '注册成功，可以登录',
-                type: 'success'
-              });
-              this.$router.replace('/user/login')
+
 
             }
           ).catch(error=> {

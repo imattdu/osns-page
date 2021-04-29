@@ -11,6 +11,8 @@ import Set from "../views/Set";
 import AccountInfo from "../views/set/AccountInfo";
 import UserProfile from "../views/set/UserProfile";
 import Tag from "../views/Tag";
+import Person from "../views/Person";
+import LoginInfo from "../views/set/LoginInfo";
 
 
 Vue.use(Router)
@@ -53,6 +55,10 @@ export default new Router({
       component: Register
     },
     {
+      path: '/user/person',
+      component: Person
+    },
+    {
       path: '/user/set',
       component: Set,
       children: [
@@ -67,6 +73,10 @@ export default new Router({
         {
           path: '/user/set/userProfile',
           component: UserProfile
+        },
+        {
+          path: '/user/set/loginInfo',
+          component: LoginInfo
         }
       ]
     }

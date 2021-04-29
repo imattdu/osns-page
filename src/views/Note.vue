@@ -1,6 +1,6 @@
 <template>
   <div v-if="isLogin">
-
+    <!--标签 -->
     <el-select
       v-model="cat_value"
       multiple
@@ -16,10 +16,12 @@
         :value="item.value">
       </el-option>
     </el-select>
+
     <el-table
       ref="filterTable"
       :data="tableData"
-      max-height="500px"
+      height="450px"
+      style="width: 100%"
       >
       <el-table-column
         prop="updated_at"
@@ -58,20 +60,24 @@
       </el-table-column>
     </el-table>
 
-    <div class="block">
-      <span class="demonstration"></span>
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="pageSizes"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
-    </div>
+    <el-row>
 
-    <el-dialog title="转发内容" :visible.sync="dialogFormVisible">
+        <span class="demonstration"></span>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size="pageSize"
+          :pager-count="3"
+          background
+          hide-on-single-page="true"
+          layout="total, sizes, prev, pager, next"
+          :total="total">
+        </el-pagination>
+    </el-row>
+
+    <el-dialog title="转发内容" width="400px" :visible.sync="dialogFormVisible">
       <el-form>
         <el-form-item>
 
@@ -84,7 +90,6 @@
             </el-option>
           </el-select>
         </el-form-item>
-
         <el-form-item>
 
           <el-input
@@ -111,9 +116,7 @@
 import {mapState} from 'vuex'
 import axios from "axios";
 export default {
-  computed: {
-    ...mapState(['isLogin', 'user']),
-  },
+
   mounted() {
     let url = `/note/list?uid=${this.user.id}`
     const tags = this.cat_value.toString()
@@ -123,7 +126,7 @@ export default {
     url = `/note/tag/list?uid=${this.user.id}`
     axios.get(url).then(
       response => {
-        this.cat_options = response.data.note_tag_name_list
+        this.cat_options = response.data.data
       }
     ).catch(error => {
     });
@@ -158,9 +161,11 @@ export default {
       total: 100
     }
   },
+  computed: {
+    ...mapState(['isLogin', 'user']),
+  },
   methods: {
     selectTags() {
-
         let curPage = 1
         let pageSize = this.pageSize
         let tags = this.cat_value.toString()
@@ -170,8 +175,8 @@ export default {
       let url = `/note/list?uid=${this.user.id}&curPage=${curPage}&pageSize=${pageSize}&tags=${tags}`
       axios.get(url).then(
         response => {
-          this.tableData = response.data.res_note_list
-          this.total = response.data.total
+          this.tableData = response.data.data.res_note_list
+          this.total = response.data.data.total
         }
       ).catch(error => {
 
@@ -299,6 +304,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
 
 </style>

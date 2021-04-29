@@ -1,8 +1,6 @@
 <template>
   <div>
-
     <el-row>
-
       <el-col :xs="24" :sm="17" :md="12">
         <div class="grid-content bg-purple-light">
 
@@ -44,7 +42,6 @@ export default {
       if (value === '') {
         callback(new Error('请输入用户名'));
       } else {
-
         callback();
       }
     };
@@ -79,7 +76,6 @@ export default {
         if (valid) {
 
           if (!(JSON.stringify(this.user)==='{}' || this.isLogin === true)) {
-
             this.$message({
               message: '退出后在登录',
               type: 'warning'
@@ -95,21 +91,24 @@ export default {
           axios.post(url, user).then(
             response => {
 
-              if (response.data.res == 'success') {
-                console.log(response.data)
+              if (response.data.success) {
+                console.log(response.data.data)
                 this.$message({
-                  message: '登录成功',
+                  message: response.data.message,
                   type: 'success',
-                  showClose: true
-                });
+                  showClose: true,
+                  duration: 3000
+                })
                 storageUtils.saveLoginStatus(true)
                 this.$store.dispatch('updateLoginStatus')
-                this.$store.dispatch('initUserInfo', response.data)
+                this.$store.dispatch('initUserInfo', response.data.data)
                 this.$router.replace('/note')
               } else {
                 this.$message({
                   message: '用户名密码不匹配',
-                  type: 'error'
+                  type: 'error',
+                  showClose: true,
+                  duration: 3000
                 });
               }
 

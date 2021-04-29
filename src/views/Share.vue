@@ -3,6 +3,7 @@
     <el-table
       ref="filterTable"
       :data="tableData"
+      height="450px"
       style="width: 100%">
       <el-table-column
         prop="created_at"
@@ -12,12 +13,19 @@
         min-width="100px"
       >
       </el-table-column>
+
       <el-table-column
-        prop="username"
-        label="用户"
-        min-width="50px"
-      >
+        label="用户">
+        <template slot-scope="scope" >
+          <el-link @click="handleToPerson(scope.$index, scope.row)" :underline="false">
+            <el-avatar shape="square" :size="30" :src="scope.row.avatar"
+
+            ></el-avatar>
+          </el-link>
+
+        </template>
       </el-table-column>
+
       <el-table-column
         prop="content"
         label="转发内容"
@@ -33,7 +41,15 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="handleRead(scope.$index, scope.row)">阅读</el-button>
+            @click="handleRead(scope.$index, scope.row)">阅读
+          </el-button>
+
+          <!--          <el-button
+                      size="mini"
+                      @click="handleToPerson(scope.$index, scope.row)">{{scope.row.avatar}}
+                    </el-button>-->
+
+
         </template>
       </el-table-column>
     </el-table>
@@ -46,7 +62,10 @@
         :current-page="currentPage"
         :page-sizes="pageSizes"
         :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
+        background
+        :pager-count="3"
+        hide-on-single-page="true"
+        layout="total, sizes, prev, pager, next"
         :total="total">
       </el-pagination>
     </div>
@@ -56,23 +75,13 @@
 <script>
 import {mapState} from 'vuex'
 import axios from "axios";
+
 export default {
   computed: {
     ...mapState(['isLogin', 'user']),
   },
   mounted() {
-   /* const url = `/note/forward/list`
-    const user = this.user
-    axios.post(url, user).then(
-      response => {
-        console.log(response.data.res_note_forward_list)
-        this.tableData = response.data.res_note_forward_list
-      }
-    ).catch(error => {
-
-    });*/
     this.initTableData(this.currentPage, this.pageSize)
-
   },
   data() {
     return {
@@ -85,16 +94,18 @@ export default {
     }
   },
   methods: {
-    initTableData(curPage=1,pageSize=5) {
+    initTableData(curPage = 1, pageSize = 5) {
 
       const url = `/note/forward/list?uid=${this.user.id}&curPage=${curPage}&pageSize=${pageSize}`
       axios.get(url).then(
         response => {
-          this.tableData = response.data.res_note_forward_list
-          this.total = response.data.total
+          if (response.data.success) {
+            console.log(response.data.data)
+            this.tableData = response.data.data.res_note_forward_list
+            this.total = response.data.data.total
+          }
         }
       ).catch(error => {
-
       });
     },
     resetDateFilter() {
@@ -114,19 +125,20 @@ export default {
       console.log(index, row);
       this.$router.push(`/note/read/${row.note_id}`)
     },
+    handleToPerson(index, row) {
+      const uid =row.forwardUid
+      this.$router.push(`/user/person?uid=${uid}`)
+    },
     handleSizeChange(val) {
       this.pageSize = val
       console.log(pageSize);
       let pageSize = this.pageSize
-
-      this.initTableData(1,this.pageSize)
+      this.initTableData(1, this.pageSize)
     },
     handleCurrentChange(val) {
       let pageSize = this.pageSize
-      this.initTableData(val,this.pageSize)
+      this.initTableData(val, this.pageSize)
     }
-
-
   },
 }
 </script>
