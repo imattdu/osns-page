@@ -13,6 +13,7 @@ import UserProfile from "../views/set/UserProfile";
 import Tag from "../views/Tag";
 import Person from "../views/Person";
 import LoginInfo from "../views/set/LoginInfo";
+import Stat from "../views/Stat";
 
 
 Vue.use(Router)
@@ -45,6 +46,10 @@ export default new Router({
     {
       path: '/note/delete',
       component: Delete
+    },
+    {
+      path: '/note/stat',
+      component: Stat
     },
     {
       path: '/user/login',

@@ -2,7 +2,6 @@
 
   <div>
 
-
     <el-menu class="el-menu-demo" mode="horizontal">
       <el-menu-item style="color: #409EFF" @click="toIndex">在线学习笔记系统</el-menu-item>
       <el-menu-item v-if="isLogin" index="1">
@@ -20,8 +19,11 @@
       <el-menu-item v-if="isLogin" index="5">
         <router-link to="/note/delete">回收站</router-link>
       </el-menu-item>
+      <el-menu-item v-if="isLogin && user.is_super && user.is_super==1" index="6">
+        <router-link to="/note/stat">统计</router-link>
+      </el-menu-item>
 
-      <el-menu-item v-if="isLogin" index="6">
+      <el-menu-item v-if="isLogin" index="7">
         <router-link to="/user/person">个人中心</router-link>
       </el-menu-item>
 
@@ -31,10 +33,13 @@
 
           <span class="el-dropdown-link">
                 <el-avatar :src="user.avatar"></el-avatar>
-                {{ user.nickname }}<i class="el-icon-arrow-down el-icon--right"></i>
+
+                {{ user.nickname }}<i v-if="user.is_super==1" class="el-icon-circle-check"></i><i class="el-icon-arrow-down el-icon--right"></i>
             </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="accountSet">账号设置</el-dropdown-item>
+            <el-dropdown-item v-if="user.is_super==0" command="openSuper">开通会员</el-dropdown-item>
+            <el-dropdown-item v-if="user.is_super==1" command="closeSuper">关闭会员</el-dropdown-item>
             <el-dropdown-item command="quit">退出</el-dropdown-item>
             <el-dropdown-item divided command="help">帮助</el-dropdown-item>
           </el-dropdown-menu>
@@ -51,11 +56,10 @@
     </el-menu>
 
     <el-row>
-      <el-col :xs="24" :sm="24" :md="24" id="content">
+      <el-col :xs="24" :sm="24" :md="24">
         <router-view/>
       </el-col>
     </el-row>
-
 
 
   </div>
@@ -114,6 +118,62 @@ export default {
         this.dialogFormVisible = true
       } else if (command == 'accountSet') {
         this.$router.push('/user/set')
+      } else if (command == 'openSuper') {
+
+        const url = '/accounts/update'
+        const user = this.user
+        user.is_super = 1
+        axios.post(url, user).then(
+          response => {
+            if (response.data.success) {
+              this.$store.dispatch('initUserInfo', response.data.data)
+              this.$message({
+                type: 'success',
+                message: '会员开通成功',
+                duration: 3000,
+                showClose: true
+              });
+            } else {
+              this.$message({
+                type: 'error',
+                message: '服务繁忙',
+                duration: 3000,
+                showClose: true
+              });
+            }
+
+          }
+        ).catch(error => {
+          console.log(error)
+        })
+
+      } else if (command == 'closeSuper') {
+        const url = '/accounts/update'
+        const user = this.user
+        user.is_super = 0
+        axios.post(url, user).then(
+          response => {
+            if (response.data.success) {
+              this.$store.dispatch('initUserInfo', response.data.data)
+              this.$message({
+                type: 'success',
+                message: '会员已经关闭',
+                duration: 3000,
+                showClose: true
+              });
+            } else {
+              this.$message({
+                type: 'error',
+                message: '服务繁忙',
+                duration: 3000,
+                showClose: true
+              });
+            }
+
+          }
+        ).catch(error => {
+          console.log(error)
+        })
       } else if (command == 'quit') {
         this.$store.dispatch('quit')
         const url = '/accounts/quit'
@@ -138,7 +198,7 @@ export default {
         this.$message({
           message: '注册需要先退出登录',
           showClose: true,
-          duration: 500
+          duration: 3000
         });
       }
 

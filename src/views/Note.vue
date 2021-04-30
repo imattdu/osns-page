@@ -34,11 +34,9 @@
       <el-table-column
         prop="title"
         label="标题"
-        min-width="300px"
+        min-width="150px"
         >
       </el-table-column>
-
-
 
       <el-table-column min-width="300px" label="操作"  >
 
@@ -72,7 +70,7 @@
           :pager-count="3"
           background
           hide-on-single-page="true"
-          layout="total, sizes, prev, pager, next"
+          layout="sizes, prev, pager, next"
           :total="total">
         </el-pagination>
     </el-row>

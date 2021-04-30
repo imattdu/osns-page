@@ -65,7 +65,7 @@
         background
         :pager-count="3"
         hide-on-single-page="true"
-        layout="total, sizes, prev, pager, next"
+        layout="sizes, prev, pager, next"
         :total="total">
       </el-pagination>
     </div>
