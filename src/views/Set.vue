@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-menu  class="el-menu-demo" mode="horizontal" >
+    <el-menu v-if="isLogin"  class="el-menu-demo" mode="horizontal" >
       <el-menu-item @click="back"><i class="el-icon-back"></i>返回</el-menu-item>
       <el-menu-item index="1">
         <router-link to="/user/set/accountInfo">账号信息</router-link>
@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import {mapState} from "vuex";
+
 export default {
   name: "Set",
   data() {
@@ -28,6 +30,10 @@ export default {
       activeIndex: '1',
       activeIndex2: '1'
     };
+  },
+  computed: {
+    ...mapState(['isLogin']),
+    ...mapState(['user']),
   },
   methods: {
     handleSelect(key, keyPath) {

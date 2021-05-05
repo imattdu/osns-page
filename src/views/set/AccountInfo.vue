@@ -1,7 +1,7 @@
 <template>
   <el-row>
 
-    <el-col :xs="24" :sm="17" :md="12">
+    <el-col v-if="isLogin" :xs="24" :sm="17" :md="12">
       <el-form ref="user" :model="user" label-width="80px">
         <el-form-item label="用户名">
           <el-input disabled v-model="user.username"></el-input>

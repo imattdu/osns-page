@@ -1,7 +1,7 @@
 <template>
 <div>
 
-    <el-timeline :reverse="reverse">
+    <el-timeline v-if="isLogin" :reverse="reverse">
       <el-timeline-item
         v-for="(activity, index) in activities"
         :key="index"

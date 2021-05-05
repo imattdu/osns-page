@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <el-row v-if="isLogin">
     <el-col :xs="24" :sm="17" :md="12">
       <el-form ref="form" :model="user_profile" label-width="80px">
         <el-form-item label="姓名">
